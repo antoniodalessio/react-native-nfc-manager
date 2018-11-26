@@ -537,7 +537,7 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 				try {
 					String[] bytes = readableArrayToStringArray(bytesArray);
 				 	NfcA nfcA = NfcA.get(tag);
-				 	
+				 	nfcA.setTimeout(2000);
 	                nfcA.connect();
 
 	                byte[] out = new byte[]{};
@@ -547,13 +547,11 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 		    			out = nfcA.transceive(command);
 	    			}
 
-
 	    			if (nfcA.isConnected()) {
 	    				nfcA.close();
 	    			}
 
-				 	
-				 	callback.invoke(null, out);
+				 	callback.invoke(null, "commands sent");
 				 } catch (Exception e) {
 				 	callback.invoke(null, "Ops, something went wrong :-(");
 				 }
