@@ -525,6 +525,43 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 		}
 	}
 
+
+	@ReactMethod
+	public void sendCommands(ReadableArray bytesArray, Callback callback) {
+		synchronized(this) {
+			 if (techRequest != null) {
+
+			 	Tag tag = (Tag) this.currentIntent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+				
+				try {
+					String[] bytes = readableArrayToStringArray(bytesArray);
+				 	NfcA nfcA = NfcA.get(tag);
+				 	
+	                nfcA.connect();
+
+	                byte[] out = new byte[]{};
+
+	                for(int i = 0; i < bytesArray.size(); i++) {
+		     			byte[] command = this.decodeHexString(bytes[i]);
+		    			out = nfcA.transceive(command);
+	    			}
+
+
+	    			if (nfcA.isConnected()) {
+	    				nfcA.close();
+	    			}
+
+				 	
+				 	callback.invoke(null, out);
+				 } catch (Exception e) {
+				 	callback.invoke(null, "Ops, something went wrong :-(");
+				 }
+			 } else {
+			 	callback.invoke("no tech request available");
+			 }
+		}
+	}
+
 	@ReactMethod
 	public void transceive(ReadableArray rnArray, Callback callback) {
 		synchronized(this) {
@@ -1065,5 +1102,41 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 		}
 		return value;
 	}
+
+		public static String[] readableArrayToStringArray(ReadableArray readableArray) {
+		String[] string = new String[readableArray.size()];
+		for (int i = 0; i < readableArray.size(); i++) {
+			string[i] = (String)(readableArray.getString(i));
+		}
+		return string;
+	}
+
+	private int toDigit(char hexChar) {
+        int digit = Character.digit(hexChar, 16);
+        if(digit == -1) {
+            throw new IllegalArgumentException(
+                    "Invalid Hexadecimal Character: " + hexChar);
+        }
+        return digit;
+    }
+
+    public byte hexToByte(String hexString) {
+        int firstDigit = toDigit(hexString.charAt(0));
+        int secondDigit = toDigit(hexString.charAt(1));
+        return (byte) ((firstDigit << 4) + secondDigit);
+    }
+
+	public byte[] decodeHexString(String hexString) {
+        if (hexString.length() % 2 == 1) {
+            throw new IllegalArgumentException(
+                    "Invalid hexadecimal String supplied.");
+        }
+
+        byte[] bytes = new byte[hexString.length() / 2];
+        for (int i = 0; i < hexString.length(); i += 2) {
+            bytes[i / 2] = hexToByte(hexString.substring(i, i + 2));
+        }
+        return bytes;
+    }
 }
 

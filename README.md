@@ -134,6 +134,10 @@ NfcManager.registerTagEvent(tag => {
 ### unregisterTagEvent()
 Stop listening to NFC tags.
 
+
+### sendCommands(array)
+Send multiple serial ndef commands in hex string. Usage: sendCommands(["1b2AC1A9C1", "3f0100000000"]). 
+
 ### requestNdefWrite(bytes, options) [Android only]
 Request writing **NdefMessage** (constructed by `bytes` array you passed) into next discovered tag.
 Notice you must call `registerTagEvent` first before calling this. 

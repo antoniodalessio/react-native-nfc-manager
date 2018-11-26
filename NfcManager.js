@@ -549,6 +549,25 @@ class NfcManager {
   }
 
   // -------------------------------------
+  // Send multiple serial ndef commands in hex string. Usage: sendCommands(["1b2AC1A9C1", "3f0100000000"])
+  // -------------------------------------
+  sendCommands(bytes) {
+      if (Platform.OS === 'ios') {
+      return Promise.reject('not implemented');
+    }
+
+    return new Promise((resolve, reject) => {
+      NativeNfcManager.sendCommands(bytes, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      })
+    })
+  }
+
+  // -------------------------------------
   // transceive works for NfcA, NfcB, NfcF, NfcV, IsoDep and MifareUltralight
   // -------------------------------------
   transceive(bytes) {
