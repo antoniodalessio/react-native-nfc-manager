@@ -551,7 +551,7 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 	    				nfcA.close();
 	    			}
 
-				 	callback.invoke(null, "commands sent");
+				 	callback.invoke(null, "commands sent" + out);
 				 } catch (Exception e) {
 				 	callback.invoke(null, "Ops, something went wrong :-(");
 				 }
