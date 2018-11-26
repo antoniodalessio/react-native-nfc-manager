@@ -60,6 +60,7 @@ class NfcManager extends ReactContextBaseJavaModule implements ActivityEventList
 	private Boolean isResumed = false;
 	private WriteNdefRequest writeNdefRequest = null;
 	private TagTechnologyRequest techRequest = null;
+	private Intent currentIntent;
 
 	class WriteNdefRequest {
 		NdefMessage message;
